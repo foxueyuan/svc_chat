@@ -15,7 +15,7 @@ async def chat(request):
     result = {'errcode': 0, 'errmsg': 'ok'}
 
     if 'speech' in data or 'speech_url' in data:
-        text_rst = await  request_asr(conf.SVC_ASR_URL, data['speech'], data['speech_url'])
+        text_rst = await  request_asr(conf.SVC_ASR_URL, data.get('speech'), data.get('speech_url'))
         if text_rst['errcode'] != 0:
             return response.json({'errcode': 0,
                                   'errmsg': 'ok',
