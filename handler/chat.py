@@ -31,6 +31,7 @@ async def chat(request):
     if rst:
         demo_answer_index = simhash_answer_index[rst]
         result['data'] = {'msgtype': 'text',
+                          'text': data['text'],
                           'content': conf.DEMO_ANSWER[demo_answer_index]}
         return response.json(result)
 
@@ -42,12 +43,14 @@ async def chat(request):
 
     if not demo_simlarity_lsi:
         result['data'] = {'msgtype': 'text',
-                          'content': '对不起，我不明白你在说什么，但我很快就会明白。'}
+                          'text': data['text'],
+                          'content': '对不起，您的问题我有点儿不明白，请换个问题问我。'}
         return response.json(result)
 
     demo_answer_index = sorted([(abs(v - 1), k) for k, v in demo_simlarity_lsi])[0][1]
 
     result['data'] = {'msgtype': 'text',
+                      'text': data['text'],
                       'content': conf.DEMO_ANSWER[demo_answer_index]}
 
     return response.json(result)
