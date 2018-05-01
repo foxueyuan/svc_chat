@@ -101,3 +101,9 @@ ENV/
 .mypy_cache/
 
 .idea/
+
+CNN_logs/
+
+.DS_Store
+
+qa_data/

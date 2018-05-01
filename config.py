@@ -7,7 +7,11 @@ REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 16379
 REDIS_DB = 0
 
-SVC_ASR_URL = 'http://127.0.0.1:10002/ai/speech/asr'
+SVC_ASR_URL = 'http://127.0.0.1/ai/speech/asr'
+SVC_SPAM_URL = 'http://127.0.0.1/ai/nlp/spam'
+SVC_WORDCOM_URL = 'http://127.0.0.1/ai/nlp/wordcom'
+SVC_TEXTCHAT_URL = 'http://127.0.0.1/ai/nlp/textchat'
+SVC_SMALL_TALK_URL = 'http://127.0.0.1/fo'
 
 DEMO_STOPWORDS = ['怎样', '怎么', '如何', '怎么办', '请问', '律师']
 DEMO_STOP_FLAG = ['c', 'd', 'f', 'm', 'p', 'r', 't', 'u', 'uj', 'x']
