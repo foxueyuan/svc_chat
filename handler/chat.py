@@ -98,7 +98,7 @@ async def request_asr(url, speech=None, len=None, speech_url=None):
 
 async def request_spam(url, text):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, params={'text': text}) as resp:
+        async with session.get(url, json={'text': text}) as resp:
             return await resp.json()
 
 
@@ -117,12 +117,12 @@ async def request_small_talk(url, ask):
 
 async def request_wordcom(url, text):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, params={'text': text}) as resp:
+        async with session.get(url, json={'text': text}) as resp:
             return await resp.json()
 
 
 async def request_textchat(url, text):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, params={'text': text}) as resp:
+        async with session.get(url, json={'text': text}) as resp:
             resp_json = await resp.json()
             return resp_json['answer']
