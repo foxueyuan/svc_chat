@@ -24,7 +24,7 @@ async def chat(request):
             data['text'] = text_rst['content']
 
     # 文本审核，违禁处理
-    spam_resp = await request_small_talk(conf.SVC_SPAM_URL, data['text'])
+    spam_resp = await request_spam(conf.SVC_SPAM_URL, data['text'])
     if spam_resp.get('spam', 0):
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
