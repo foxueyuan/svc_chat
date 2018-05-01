@@ -124,8 +124,9 @@ def question_answer(question):  # 用户输入一句新问题
 
         # 如果新问题与候选问题完全一致，则直接返回
         if l1['_source']['question'] == question:
-            return_dic[l1['_source']['question']] = l1['_source']['answer']
-            return json.dumps(return_dic)
+            return_dic['question'] = l1['_source']['question']
+            return_dic['answer'] = l1['_source']['answer']
+            return return_dic
 
         # 生成与新问题、候选问题相关的基础运算变量
         qa_pair = (l1['_source']['question'], l1['_source']['answer'])
@@ -147,10 +148,11 @@ def question_answer(question):  # 用户输入一句新问题
     # 精选top1
     selected = sorted(_selected.items(), key=lambda item: item[1], reverse=True)[0]
     if selected[1] > THRESHOLD:
-        return_dic[selected[0][0]] = selected[0][1]
-        return json.dumps(return_dic)
+        return_dic['question'] = selected[0][0]
+        return_dic['answer'] = selected[0][1]
+        return return_dic
 
-    return json.dumps(return_dic)
+    return return_dic
 
 
 if __name__ == '__main__':

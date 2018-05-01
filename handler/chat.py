@@ -4,8 +4,6 @@ import aiohttp
 import json
 from sanic import response
 
-from module.nlp import simi_cal_lsi
-from module.nlp import simi_cal_simhash
 from module.qa_main import question_answer
 
 
@@ -58,34 +56,19 @@ async def chat(request):
                               'content': '需要说明查询地区，您可以这么问："长沙今天天气怎样？"'}
         return response.json(result)
 
-    simhash_index = request.app.simhash_index
-    simhash_answer_index = request.app.simhash_answer_index
+    # 从问答库和知识库中匹配
+    q_a_hint = json.loads(question_answer(data['text']))
 
-    rst = await simi_cal_simhash(conf, simhash_index, data['text'])
-    if rst:
-        demo_answer_index = simhash_answer_index[rst]
+    if q_a_hint:
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
-                          'content': conf.DEMO_ANSWER[demo_answer_index]}
-        return response.json(result)
-
-    corpus_vectors = request.app.corpus_vectors
-    dictionary = request.app.dictionary
-
-    demo_simlarity_lsi = await simi_cal_lsi(conf, corpus_vectors, dictionary, data['text'])
-
-    if not demo_simlarity_lsi:
+                          'content': q_a_hint['answer']}
+    else:
+        # 匹配不到进入闲聊模式
         small_talk_answer = await request_textchat(conf.SVC_TEXTCHAT_URL, data['text'])
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
                           'content': small_talk_answer}
-        return response.json(result)
-
-    demo_answer_index = sorted([(abs(v - 1), k) for k, v in demo_simlarity_lsi])[0][1]
-
-    result['data'] = {'msgtype': 'text',
-                      'text': data['text'],
-                      'content': conf.DEMO_ANSWER[demo_answer_index]}
 
     return response.json(result)
 
