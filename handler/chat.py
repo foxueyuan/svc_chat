@@ -10,7 +10,7 @@ from module.qa_main import question_answer
 async def qa_test(request):
     data = request.json
 
-    result = json.loads(question_answer(data['text']))
+    result = question_answer(data['text'])
 
     return response.json(result)
 
@@ -57,7 +57,7 @@ async def chat(request):
         return response.json(result)
 
     # 从问答库和知识库中匹配
-    q_a_hint = json.loads(question_answer(data['text']))
+    q_a_hint = question_answer(data['text'])
 
     if q_a_hint:
         result['data'] = {'msgtype': 'text',

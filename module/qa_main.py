@@ -162,9 +162,8 @@ if __name__ == '__main__':
 
         s_input = input('请输入：')
         start = time.time()
-        result = json.loads(question_answer(s_input))
-        for key in result:
-            print(key, result[key])
+        result = question_answer(s_input)
+        print(result)
         end = time.time()
         print("=" * 40)
         print("耗时：" + str(round((end - start), 3)) + "s")
