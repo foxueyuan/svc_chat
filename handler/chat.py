@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import aiohttp
+import json
 from sanic import response
 
 from module.nlp import simi_cal_lsi
 from module.nlp import simi_cal_simhash
+from module.qa_main import question_answer
+
+
+async def qa_test(request):
+    data = request.json
+
+    result = json.loads(question_answer(data['text']))
+
+    return response.json(result)
 
 
 async def chat(request):

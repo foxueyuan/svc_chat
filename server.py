@@ -12,6 +12,8 @@ from handler.chat import chat_with_asr_cb
 from module.nlp import gen_corpus_vectors
 from module.nlp import gen_simhash_index
 
+from handler.chat import qa_test
+
 
 app = Sanic(__name__)
 app.config.from_object(config)
@@ -19,6 +21,8 @@ app.config.from_object(config)
 
 app.add_route(chat, '/chat', methods=['POST'])
 app.add_route(chat, '/chat_with_asr_cb', methods=['POST'])
+
+app.add_route(qa_test, 'qa_test', methods=['POST'])
 
 
 @app.listener('before_server_start')

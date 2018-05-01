@@ -8,7 +8,7 @@ from elasticsearch.helpers import bulk
 
 cur_dir = os.getcwd()
 
-ESMAX = 1
+ESMAX = 10
 
 
 def query_generation(inputs):
