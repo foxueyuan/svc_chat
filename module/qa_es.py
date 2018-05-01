@@ -62,7 +62,7 @@ class ElasticSearchClient(object):
 
 class LoadElasticSearch(object):  # 在ES中加载、批量插入数据
     def __init__(self):
-        self.index = 'fo-qa'
+        self.index = 'fo-qa-index'
         self.doc_type = 'test-type'
         self.es_client = ElasticSearchClient.get_es_servers()
         self.set_mapping()
@@ -110,6 +110,7 @@ class LoadElasticSearch(object):  # 在ES中加载、批量插入数据
                 '_type': self.doc_type,
                 '_source': {
                     'topic': row_obj.get('topic', None),
+                    'title': row_obj.get('title', None),
                     'question': row_obj.get('question', None),
                     'answer': row_obj.get('answer', None),
                 }
@@ -132,7 +133,7 @@ class LoadElasticSearch(object):  # 在ES中加载、批量插入数据
 if __name__ == '__main__':
     from datetime import datetime
     es = ElasticSearchClient.get_es_servers()
-    es.index(index='fo-qa', doc_type='test-type', body={'any': 'data', 'timestamp': datetime.now()})
+    es.index(index='fo-qa-index', doc_type='test-type', body={'any': 'data', 'timestamp': datetime.now()})
     load_es = LoadElasticSearch()
     qa_list = []
     with open(cur_dir + '/qa_data/basic_data/fo_qa.txt', 'r') as f:
