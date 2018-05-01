@@ -117,7 +117,7 @@ def question_answer(question):  # 用户输入一句新问题
 
     # 无查询结果，直接返回空，稍后调用闲聊接口
     if len(_searched['hits']['hits']) == 0:
-        return json.dumps(return_dic)
+        return return_dic
 
     _selected = {}  # 存放精选后的候选问题-答案的集合
     for l1 in _searched['hits']['hits']:  # 问题精选

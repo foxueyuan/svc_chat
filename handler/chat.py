@@ -31,6 +31,13 @@ async def chat(request):
         else:
             data['text'] = text_rst['content']
 
+    if len(data['text']) < 5:
+        # 问句太短直接进入闲聊模式
+        small_talk_answer = await request_textchat(conf.SVC_TEXTCHAT_URL, data['text'])
+        result['data'] = {'msgtype': 'text',
+                          'text': data['text'],
+                          'content': small_talk_answer}
+
     # 文本审核，违禁处理
     spam_resp = await request_spam(conf.SVC_SPAM_URL, data['text'])
     if spam_resp.get('spam', 0):
