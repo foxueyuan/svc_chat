@@ -113,7 +113,7 @@ def question_answer(question):  # 用户输入一句新问题
     es = ElasticSearchClient.get_es_servers()
     input_string = [{"match_phrase": {"question": phrase}} for phrase in text_main_content]
     _query_name_contains = query_generation(input_string)  # 生成ES查询
-    _searched = es.search(index='my-index', doc_type='test-type', body=_query_name_contains)
+    _searched = es.search(index='fo-qa', doc_type='test-type', body=_query_name_contains)
 
     # 无查询结果，直接返回空，稍后调用闲聊接口
     if len(_searched['hits']['hits']) == 0:
