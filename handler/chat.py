@@ -112,8 +112,8 @@ async def request_spam(url, text):
             return await resp.json()
 
 
-async def request_unit(url, scene_id, text):
-    payload = {'scene_id': scene_id, 'text': text}
+async def request_unit(url, text):
+    payload = {'text': text}
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload) as resp:
             return await resp.json()
