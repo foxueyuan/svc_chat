@@ -166,8 +166,8 @@ if __name__ == '__main__':
         s = np.zeros(MAX_LENTH ** 2 + 2, float)
         for line in open(cur_dir + '/qa_data/basic_data/cnn_train_data.txt', 'r'):
             line_seg = line.strip().split('\t')
-            w1 = line_seg[1]
-            w2 = line_seg[3]
+            w1 = jieba.lcut(line_seg[1])
+            w2 = jieba.lcut(line_seg[3])
             label1 = line_seg[4]
             label2 = line_seg[5]
             line_simi = s1_s2_simipics(w1, w2, MAX_LENTH) + [float(label1)] + [float(label2)]

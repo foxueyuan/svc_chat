@@ -2,7 +2,6 @@
 
 import time
 import jieba
-import json
 
 from module.qa_preload import QAPreload as QA
 from module.qa_es import ElasticSearchClient, query_generation

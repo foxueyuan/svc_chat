@@ -8,7 +8,8 @@ import numpy as np
 
 from module.qa_preload import QAPreload as QA
 
-import importlib, sys
+import importlib
+import sys
 importlib.reload(sys)
 
 
@@ -125,7 +126,7 @@ class CNNSentenceSimilarity(object):
             prediction_result = sess.run(
                 CNNSentenceSimilarity.prediction,
                 feed_dict={
-                    CNNSentenceSimilarity.xs: s1_s2_simipics(s1, s2, MAX_LENTH),
+                    CNNSentenceSimilarity.xs: s1_s2_simipics(jieba.lcut(s1), jieba.lcut(s2), MAX_LENTH),
                     CNNSentenceSimilarity.keep_prob: 1.0
                 }
             )

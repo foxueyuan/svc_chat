@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import aiohttp
-import json
 from sanic import response
 
 from module.qa_main import question_answer
@@ -53,12 +52,12 @@ async def chat(request):
         if 'data' not in result:
             result['data'] = {'msgtype': 'text',
                               'text': data['text'],
-                              'content': '需要说明查询地区，您可以这么问："长沙今天天气怎样？"'}
+                              'content': '需要说明查询地区，您可以这么问："长沙今天天气怎样"'}
         return response.json(result)
 
     if len(data['text']) < 6:
         # 问句太短直接进入闲聊模式
-        small_talk_answer = await request_textchat(conf.SVC_TEXTCHAT_URL, data['text'])
+        small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
                           'content': small_talk_answer}
@@ -73,7 +72,7 @@ async def chat(request):
                           'content': q_a_hint['answer']}
     else:
         # 匹配不到进入闲聊模式
-        small_talk_answer = await request_textchat(conf.SVC_TEXTCHAT_URL, data['text'])
+        small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
                           'content': small_talk_answer}
@@ -110,19 +109,13 @@ async def request_unit(url, scene_id, text):
             return await resp.json()
 
 
-async def request_small_talk(url, ask):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, params={'ask': ask}) as resp:
-            return await resp.text()
-
-
 async def request_wordcom(url, text):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json={'text': text}) as resp:
             return await resp.json()
 
 
-async def request_textchat(url, text):
+async def request_small_talk(url, text):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json={'text': text}) as resp:
             resp_json = await resp.json()
