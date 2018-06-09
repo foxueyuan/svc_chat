@@ -55,6 +55,16 @@ async def chat(request):
                               'content': '需要说明查询地区，您可以这么问："长沙今天天气怎样"'}
         return response.json(result)
 
+    # 从知识库中匹配
+    kg_rst = await request_unit(conf.SVC_UNIT_URL, data['text'])
+    if kg_rst['errcode'] == 0:
+        for action in kg_rst['result']['response']['action_list']:
+            if action['type'] == 'satisfy':
+                result['data'] = {'msgtype': 'text',
+                                  'text': data['text'],
+                                  'content': action['say']}
+                return response.json(result)
+
     if len(data['text']) < 6:
         # 问句太短直接进入闲聊模式
         small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
@@ -63,7 +73,7 @@ async def chat(request):
                           'content': small_talk_answer}
         return response.json(result)
 
-    # 从问答库和知识库中匹配
+    # 从问答库中匹配
     q_a_hint = question_answer(data['text'])
 
     if q_a_hint:
