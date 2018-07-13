@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import aiohttp
+import json
 from sanic import response
 
 from module.qa_main import question_answer
@@ -60,9 +61,14 @@ async def chat(request):
     if kg_rst['errcode'] == 0:
         for action in kg_rst['result']['response']['action_list']:
             if action['type'] == 'satisfy':
-                result['data'] = {'msgtype': 'text',
-                                  'text': data['text'],
-                                  'content': action['say']}
+                if action['say'].startswith('#instruction#'):
+                    result['data'] = {'msgtype': 'text',
+                                    'text': data['text'],
+                                    'content': json.loads(action['say'].strip('#instruction#'))}
+                else:
+                    result['data'] = {'msgtype': 'text',
+                                    'text': data['text'],
+                                    'content': action['say']}
                 return response.json(result)
 
     if len(data['text']) < 6:
