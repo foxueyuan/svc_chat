@@ -62,13 +62,13 @@ async def chat(request):
         for action in kg_rst['result']['response']['action_list']:
             if action['type'] == 'satisfy':
                 if action['say'].startswith('#instruction#'):
-                    result['data'] = {'msgtype': 'text',
-                                    'text': data['text'],
-                                    'content': json.loads(action['say'].strip('#instruction#'))}
+                    result['data'] = {'msgtype': 'instruction',
+                                      'text': data['text'],
+                                      'content': json.loads(action['say'].strip('#instruction#'))}
                 else:
                     result['data'] = {'msgtype': 'text',
-                                    'text': data['text'],
-                                    'content': action['say']}
+                                      'text': data['text'],
+                                      'content': action['say']}
                 return response.json(result)
 
     if len(data['text']) < 6:
