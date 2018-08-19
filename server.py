@@ -8,7 +8,6 @@ from sanic import Sanic
 import config
 
 from handler.chat import chat
-from handler.chat import chat_with_asr_cb
 from module.nlp import gen_corpus_vectors
 from module.nlp import gen_simhash_index
 

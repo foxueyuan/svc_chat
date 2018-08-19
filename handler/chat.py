@@ -80,12 +80,12 @@ async def chat(request):
         return response.json(result)
 
     # 从问答库中匹配
-    # q_a_hint = question_answer(data['text'])
-    q_a_hint = False
-    if q_a_hint:
+    # q_a_hit = question_answer(data['text'])
+    q_a_hit = False
+    if q_a_hit:
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
-                          'content': {'text': q_a_hint['answer']}}
+                          'content': {'text': q_a_hit['answer']}}
     else:
         # 匹配不到进入闲聊模式
         small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
