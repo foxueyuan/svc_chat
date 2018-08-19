@@ -27,7 +27,7 @@ async def chat(request):
             return response.json({'errcode': 0,
                                   'errmsg': 'ok',
                                   'data': {'msgtype': 'text',
-                                           'content': '对不起，我没有听清楚您说什么，请再说一遍。'}})
+                                           'content': {'text': '对不起，我没有听清楚您说什么，请再说一遍。'}}})
         else:
             data['text'] = text_rst['content']
 
@@ -36,7 +36,7 @@ async def chat(request):
     if spam_resp.get('spam', 0):
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
-                          'content': '我们都是文明人，怎么可以说这样的话。'}
+                          'content': {'text': '我们都是文明人，怎么可以说这样的话。'}}
         return response.json(result)
 
     # 语义解析，初步识别意图
@@ -48,12 +48,12 @@ async def chat(request):
                 weather_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
                 result['data'] = {'msgtype': 'text',
                                   'text': data['text'],
-                                  'content': weather_answer}
+                                  'content': {'text': weather_answer}}
 
         if 'data' not in result:
             result['data'] = {'msgtype': 'text',
                               'text': data['text'],
-                              'content': '需要说明查询地区，您可以这么问："长沙今天天气怎样"'}
+                              'content': {'text': '需要说明查询地区，您可以这么问："长沙今天天气怎样"'}}
         return response.json(result)
 
     # 从知识库中匹配
@@ -68,7 +68,7 @@ async def chat(request):
                 else:
                     result['data'] = {'msgtype': 'text',
                                       'text': data['text'],
-                                      'content': action['say']}
+                                      'content': {'text': action['say']}}
                 return response.json(result)
 
     if len(data['text']) < 6:
@@ -76,22 +76,22 @@ async def chat(request):
         small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
-                          'content': small_talk_answer}
+                          'content': {'text': small_talk_answer}}
         return response.json(result)
 
     # 从问答库中匹配
-    q_a_hint = question_answer(data['text'])
-
+    # q_a_hint = question_answer(data['text'])
+    q_a_hint = False
     if q_a_hint:
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
-                          'content': q_a_hint['answer']}
+                          'content': {'text': q_a_hint['answer']}}
     else:
         # 匹配不到进入闲聊模式
         small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
         result['data'] = {'msgtype': 'text',
                           'text': data['text'],
-                          'content': small_talk_answer}
+                          'content': {'text': small_talk_answer}}
 
     return response.json(result)
 

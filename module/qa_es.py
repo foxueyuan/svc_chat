@@ -62,28 +62,38 @@ class ElasticSearchClient(object):
 
 class LoadElasticSearch(object):  # 在ES中加载、批量插入数据
     def __init__(self):
-        self.index = 'fo-qa-index'
-        self.doc_type = 'test-type'
+        self.index = 'fo-index'
+        self.doc_type = 'qa'
         self.es_client = ElasticSearchClient.get_es_servers()
         self.set_mapping()
 
     def set_mapping(self):
         mapping = {
             self.doc_type: {
-                    'topic': {
-                        'type': 'string'
-                    },
-                    'title': {
-                        'type': 'string'
-                    },
-                    'question': {
-                        'type': 'string'
-                    },
-                    'answer': {
-                        'type': 'string'
-                    }
+                "topic": {
+                    "type": "text"
+                },
+                "question": {
+                    "type": "text"
+                },
+                "answer": {
+                    "type": "text"
+                },
+                "skillId": {
+                    "type": "long"
+                },
+                "intentId": {
+                    "type": "long"
+                },
+                "faqId": {
+                    "type": "long"
+                },
+                "updatedAt": {
+                    "type": "data",
+                    "format": "epoch_second"
                 }
             }
+        }
 
         if not self.es_client.indices.exists(index=self.index):
             self.es_client.indices.create(index=self.index, body=mapping, ignore=400)
