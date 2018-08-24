@@ -4,15 +4,15 @@ import aiohttp
 import json
 from sanic import response
 
-from module.qa_main import question_answer
-
-
-async def qa_test(request):
-    data = request.json
-
-    result = question_answer(data['text'])
-
-    return response.json(result)
+# from module.qa_main import question_answer
+#
+#
+# async def qa_test(request):
+#     data = request.json
+#
+#     result = question_answer(data['text'])
+#
+#     return response.json(result)
 
 
 async def chat(request):
@@ -93,11 +93,6 @@ async def chat(request):
                           'text': data['text'],
                           'content': {'text': small_talk_answer}}
 
-    return response.json(result)
-
-
-async def chat_with_asr_cb(request):
-    result = {'errcode': 0, 'errmsg': 'ok'}
     return response.json(result)
 
 
