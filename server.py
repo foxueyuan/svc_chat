@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-# import aioredis
+import aioredis
 import uvloop
+import jieba
 from sanic import Sanic
 
 import config
 
 from handler.chat import chat
-# from module.nlp import gen_corpus_vectors
-# from module.nlp import gen_simhash_index
-
-# from handler.chat import qa_test
 
 
 app = Sanic(__name__)
@@ -21,28 +18,24 @@ app.config.from_object(config)
 app.add_route(chat, '/chat', methods=['POST'])
 app.add_route(chat, '/chat_with_asr_cb', methods=['POST'])
 
-# app.add_route(qa_test, 'qa_test', methods=['POST'])
 
+@app.listener('before_server_start')
+async def before_server_start(app, loop):
+    conf = app.config
+    app.rdb = await aioredis.create_redis_pool(
+        (conf.REDIS_HOST, conf.REDIS_PORT),
+        db=conf.REDIS_DB,
+        encoding='utf8',
+        loop=loop
+    )
 
-# @app.listener('before_server_start')
-# async def before_server_start(app, loop):
-#     conf = app.config
-#     app.rdb = await aioredis.create_redis_pool(
-#         (conf.REDIS_HOST, conf.REDIS_PORT),
-#         db=conf.REDIS_DB,
-#         encoding='utf8',
-#         loop=loop
-#     )
-#
-#     app.dictionary, app.corpus_vectors = await gen_corpus_vectors(conf)
-#
-#     app.simhash_index, app.simhash_answer_index = await gen_simhash_index(conf)
+    async for val in app.rdb.isscan('keywords', match='*'):
+        jieba.add_word(val)
 
-
-# @app.listener('after_server_stop')
-# async def after_server_stop(app, loop):
-#     app.rdb.close()
-#     await app.rdb.wait_closed()
+@app.listener('after_server_stop')
+async def after_server_stop(app, loop):
+    app.rdb.close()
+    await app.rdb.wait_closed()
 
 
 if __name__ == "__main__":

@@ -2,17 +2,13 @@
 
 import aiohttp
 import json
+import time
+import jieba
 from sanic import response
 
+from log_task import log_task
+
 # from module.qa_main import question_answer
-#
-#
-# async def qa_test(request):
-#     data = request.json
-#
-#     result = question_answer(data['text'])
-#
-#     return response.json(result)
 
 
 async def chat(request):
@@ -43,7 +39,7 @@ async def chat(request):
     wordcom_resp = await request_wordcom(conf.SVC_WORDCOM_URL, data['text'])
     if wordcom_resp.get('intent') == 1:
         for con_token in wordcom_resp.get('com_tokens', []):
-            if con_token['com_type'] == 7:
+            if con_token['com_type'] == 7 and (con_token['com_word'] != '深圳' or '深圳' in data['text']):
                 # 处理天气问答，涉及到具体地理，后续多轮对话实现
                 weather_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
                 result['data'] = {'msgtype': 'text',
@@ -56,43 +52,47 @@ async def chat(request):
                               'content': {'text': '需要说明查询地区，您可以这么问："长沙今天天气怎样"'}}
         return response.json(result)
 
-    # 从知识库中匹配
-    kg_rst = await request_unit(conf.SVC_UNIT_URL, data['text'])
+    kg_rst = await request_unit(conf.SVC_UNIT_CHAT_URL, data['text'])
     if kg_rst['errcode'] == 0:
         for action in kg_rst['result']['response']['action_list']:
             if action['type'] == 'satisfy':
+                if action['action_id'] == 'faq_instruction_satisfy':
+                    pass
                 if action['say'].startswith('#instruction#'):
-                    result['data'] = {'msgtype': 'instruction',
-                                      'text': data['text'],
-                                      'content': json.loads(action['say'].strip('#instruction#'))}
+                    content = json.loads(action['say'].strip('#instruction#'))
+                    if content['action'] == 'time':
+                        result['data'] = {'msgtype': 'instruction',
+                                          'text': data['text'],
+                                          'content': time.strftime('%Y年%d月%m日 %H点%M分%S秒', time.localtime())}
+                    else:
+                        result['data'] = {'msgtype': 'instruction',
+                                          'text': data['text'],
+                                          'content': content}
                 else:
                     result['data'] = {'msgtype': 'text',
                                       'text': data['text'],
                                       'content': {'text': action['say']}}
+                if action['action_id'] == 'faq_qa_satisfy':
+                    log_task.send(data['text'], action['say'], 'qa')
+                elif action['action_id'] == 'faq_kg_satisfy':
+                    log_task.send(data['text'], action['say'], 'kg')
+                elif action['action_id'] == 'faq_instruction_satisfy':
+                    log_task.send(data['text'], action['say'], 'instruction')
                 return response.json(result)
 
-    if len(data['text']) < 6:
-        # 问句太短直接进入闲聊模式
-        small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
-        result['data'] = {'msgtype': 'text',
-                          'text': data['text'],
-                          'content': {'text': small_talk_answer}}
-        return response.json(result)
+    # 匹配不到进入闲聊模式
+    small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
+    result['data'] = {'msgtype': 'text',
+                      'text': data['text'],
+                      'content': {'text': small_talk_answer}}
 
-    # 从问答库中匹配
-    # q_a_hit = question_answer(data['text'])
-    q_a_hit = False
-    if q_a_hit:
-        result['data'] = {'msgtype': 'text',
-                          'text': data['text'],
-                          'content': {'text': q_a_hit['answer']}}
-    else:
-        # 匹配不到进入闲聊模式
-        small_talk_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
-        result['data'] = {'msgtype': 'text',
-                          'text': data['text'],
-                          'content': {'text': small_talk_answer}}
+    log_task.send(data['text'], small_talk_answer, 'smalltalk')
 
+    return response.json(result)
+
+
+async def chat_with_asr_cb(request):
+    result = {'errcode': 0, 'errmsg': 'ok'}
     return response.json(result)
 
 
