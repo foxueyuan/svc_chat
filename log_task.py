@@ -24,4 +24,4 @@ def log_task(question, answer, target):
         "createdAt": int(time.time())
     }
 
-    es.update(index='fo-log-index', doc_type='chat', body=body)
+    es.index(index='fo-log-index', doc_type='chat', body=body)
