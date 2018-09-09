@@ -16,11 +16,12 @@ es = Elasticsearch(hosts=conf.ES_HOST)
 
 
 @dramatiq.actor
-def log_task(question, answer):
+def log_task(question, answer, target):
     body = {
         "question": question,
         "answer": answer,
+        "target": target,
         "createdAt": int(time.time())
     }
 
-    es.update(index='foai-log-index', doc_type='chat', body=body)
+    es.update(index='fo-log-index', doc_type='chat', body=body)
