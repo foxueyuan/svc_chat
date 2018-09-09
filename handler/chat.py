@@ -57,7 +57,7 @@ async def chat(request):
         return response.json(result)
 
     # 从知识库中匹配
-    kg_rst = await request_unit(conf.SVC_UNIT_URL, data['text'])
+    kg_rst = await request_unit(conf.SVC_UNIT_CHAT_URL, data['text'])
     if kg_rst['errcode'] == 0:
         for action in kg_rst['result']['response']['action_list']:
             if action['type'] == 'satisfy':
