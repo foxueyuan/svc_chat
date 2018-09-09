@@ -9,9 +9,6 @@ from sanic import Sanic
 import config
 
 from handler.chat import chat
-# from module.nlp import gen_corpus_vectors
-# from module.nlp import gen_simhash_index
-
 from handler.chat import qa_test
 
 
@@ -37,11 +34,6 @@ async def before_server_start(app, loop):
 
     async for val in app.rdb.isscan('keywords', match='*'):
         jieba.add_word(val)
-
-    # app.dictionary, app.corpus_vectors = await gen_corpus_vectors(conf)
-
-    # app.simhash_index, app.simhash_answer_index = await gen_simhash_index(conf)
-
 
 @app.listener('after_server_stop')
 async def after_server_stop(app, loop):

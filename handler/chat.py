@@ -6,9 +6,9 @@ import time
 import jieba
 from sanic import response
 
-from module.qa_main import question_answer
-
 from log_task import log_task
+
+from module.qa_main import question_answer
 
 
 async def qa_test(request):

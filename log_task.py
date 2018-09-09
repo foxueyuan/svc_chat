@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import dramatiq
 import time
 from elasticsearch import Elasticsearch
