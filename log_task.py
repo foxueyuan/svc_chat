@@ -15,7 +15,7 @@ dramatiq.set_broker(redis_broker)
 es = Elasticsearch(hosts=conf.ES_HOST)
 
 
-@dramatiq.actor
+@dramatiq.actor(queue_name='log')
 def log_task(question, answer, target):
     body = {
         "question": question,
