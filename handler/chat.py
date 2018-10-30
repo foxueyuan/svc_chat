@@ -47,7 +47,7 @@ async def chat(request):
                                           'content': time.strftime('%Y年%d月%m日 %H点%M分%S秒', time.localtime())}
                     elif content['action'] == 'weather':
                         for lexical in rst['result']['response']['qu_res']['lexical_analysis']:
-                            if lexical['type'] == '23':
+                            if lexical['type'] in ['23', 'sys_loc']:
                                 weather_answer = await request_small_talk(conf.SVC_SMALL_TALK_URL, data['text'])
                                 result['data'] = {'msgtype': 'text',
                                                   'text': data['text'],
